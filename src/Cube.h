@@ -1,6 +1,11 @@
 #ifndef CUBE_H
 #define CUBE_H
 
+#include <GL/glew.h>
+#include <glm/vec3.hpp>
+
+#include <array>
+
 #include "Buffer.h"
 #include "Vao.h"
 

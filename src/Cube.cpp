@@ -1,7 +1,3 @@
-#include <glm/vec3.hpp>
-#include <array>
-#include <GL/glew.h>
-
 #include "Cube.h"
 
 /*
