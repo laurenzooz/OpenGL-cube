@@ -4,16 +4,22 @@ CXXFLAGS = -Wall -Wextra -std=c++11
 # Libraries
 LIBS = -lglfw -lGL -lGLEW
 
-SRC = src/Main.cpp
+# Source files
+SRCS = $(wildcard src/*.cpp)
 
-# output
+# Object files
+OBJS = $(SRCS:.cpp=.o)
+
+# Output
 OUT = out
 
 all: $(OUT)
 
-$(OUT): $(SRC)
+$(OUT): $(OBJS)
 	$(CXX) $(CXXFLAGS) $^ -o $@ $(LIBS)
 
+%.o: %.cpp
+	$(CXX) $(CXXFLAGS) -c $< -o $@
 
 clean:
-	rm -f $(OUT)
+	rm -f $(OUT) $(OBJS)
