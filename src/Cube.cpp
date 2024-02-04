@@ -2,7 +2,6 @@
 #include <array>
 #include <GL/glew.h>
 
-#include "Buffer.h"
 #include "Cube.h"
 
 /*
@@ -21,39 +20,38 @@
 	Indices for the ebo would be 123, 234, 246, 468, 135, 357, 567, 678, 347, 478, 125, 256
 	*/
 
-Cube::Cube(float size = 0.5, glm::vec3 color = glm::vec3(1.0f, 0.0f, 0.0f))
+Cube::Cube(float size, glm::vec3 color)
 {
 	this->size = size;
 	this->color = color;
 
-	// set up the indices matrix
-	unsigned int indices[36] = 
-	{
-		1, 2, 3, 
-		2, 3, 4, 
-		2, 4, 6,
-		4, 6, 8, 
-		1, 3, 5, 
-		3, 5, 7,
-		5, 6, 7, 
-		6, 7, 8,
-		3, 4, 7,
-		4, 7, 8, 
-		1, 2, 5,
-		2, 5, 6
-	};
-	// set the EBO type, and then set the buffer data
+	// set the EBO type, and then bind the VAO, VBO and EBO
 	EBO.setType(GL_ELEMENT_ARRAY_BUFFER);
-	EBO.setData(36, (void *) indices);
-	VBO.setData(24, vertices());
+	
+	EBO.bind();
+	VBO.bind();
+	VAO.bind();
+
+
+	
+
+	// set the buffer data
+	EBO.setData(36 * sizeof(int), (void *) indices);
+	VBO.setData(24 * sizeof(float), vertices.data());
+
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 24 * sizeof(float), 0);
+	glEnableVertexAttribArray(0);
+	// unbind everything for now
+	//VAO.unbind();
+	//EBO.unbind();
+	//VBO.unbind();
 }
 
-
-float* Cube::vertices()
+void Cube::setVertices()
 {
 	float d = size / 2.0f; // the delta value of how much to be moved from origin
-
-	float vertices[24] = 
+	d = 0.8f;
+	vertices = 
 	{//	   X 			Y 			Z
 		0.0f - d,  	0.0f - d,  	0.0f - d,
 		0.0f + d, 	0.0f - d, 	0.0f - d,
@@ -67,6 +65,16 @@ float* Cube::vertices()
 
 	};
 
-	return vertices;
+	//vertices = dataa;
 
+}
+
+
+void Cube::draw()
+{
+	VAO.bind();
+	VBO.bind();
+	EBO.bind();
+	//glDrawElements(GL_TRIANGLES, 24, GL_UNSIGNED_INT, 0);
+	glDrawArrays(GL_POINTS, 0, 24);
 }
