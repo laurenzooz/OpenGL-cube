@@ -1,3 +1,5 @@
+#include <GL/glew.h>
+
 #include "Buffer.h"
 
 
@@ -12,11 +14,11 @@ void Buffer::setType(GLint type)
 	this->type = type;
 }
 
-void Buffer::setData(int size, const void* data, GLuint usage = GL_STATIC_DRAW)
+void Buffer::setData(int size, const void* data, GLuint usage)
 {
-	this->bind(); // the buffer needs to be bind to set the data
-	glBufferData(type, size, data, GL_STATIC_DRAW);
-	this->unbind();
+	//this->bind(); // the buffer needs to be bind to set the data
+	glBufferData(type, size, data, usage);
+	//this->unbind();
 }
 
 void Buffer::bind()
