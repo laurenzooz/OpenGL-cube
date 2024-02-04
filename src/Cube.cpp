@@ -71,6 +71,5 @@ void Cube::draw()
 	VAO.bind();
 	VBO.bind();
 	EBO.bind();
-	//glDrawElements(GL_TRIANGLES, 24, GL_UNSIGNED_INT, 0);
-	glDrawArrays(GL_POINTS, 0, 24);
+	glDrawElements(GL_TRIANGLES, 24, GL_UNSIGNED_INT, 0);
 }
