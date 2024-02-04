@@ -2,10 +2,14 @@
 
 
 // generates the buffer and saves the type of the buffer
-Buffer::Buffer(GLint type)
+Buffer::Buffer()
+{
+	glGenBuffers(1, &id);
+}
+
+void Buffer::setType(GLint type)
 {
 	this->type = type;
-	glGenBuffers(1, &id);
 }
 
 void Buffer::setData(int size, const void* data, GLuint usage = GL_STATIC_DRAW)

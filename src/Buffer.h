@@ -6,12 +6,15 @@
 // Creates an opengl buffer object of given type
 class Buffer
 {
-public:	
+private:
 	GLuint id;
-	GLint type;
+	GLint type = GL_ARRAY_BUFFER;
+	
+public:	
+	
+	Buffer();
 
-	Buffer(GLint);
-
+	void setType(GLint); // type is gl array buffer by default, but it can be changed with this
 	void setData(int, const void*, GLuint usage = GL_STATIC_DRAW); 
 	// sets the buffer data. Default usage is static draw
 
