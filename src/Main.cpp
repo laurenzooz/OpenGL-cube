@@ -7,6 +7,8 @@
 #include <sstream>
 #include <array>
 
+#include "Cube.h"
+
 const unsigned int width = 640;
 const unsigned int height = 480;
 
@@ -43,11 +45,18 @@ int main()
 		return -1;
 	}
 
+
+	// create the cube
+	Cube cube1;
+	
+
 	// Main loop
 	while (!glfwWindowShouldClose(window))
 	{
 		glClear(GL_COLOR_BUFFER_BIT);
 
+		cube1.draw();
+		
 
 		glfwSwapBuffers(window);
 		glfwPollEvents();
