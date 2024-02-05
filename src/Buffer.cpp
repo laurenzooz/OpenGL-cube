@@ -1,3 +1,6 @@
+#include <GL/glew.h>
+#include <vector>
+
 #include "Buffer.h"
 
 // generates the buffer and saves the type of the buffer

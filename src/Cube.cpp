@@ -1,3 +1,10 @@
+#include <GL/glew.h>
+#include <glm/vec3.hpp>
+
+#include <vector>
+
+#include "Buffer.h"
+#include "Vao.h"
 #include "Cube.h"
 
 /*

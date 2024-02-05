@@ -1,9 +1,6 @@
 #ifndef BUFFER_H
 #define BUFFER_H
 
-#include <GL/glew.h>
-#include <vector>
-
 // Creates an opengl buffer object of given type
 class Buffer
 {

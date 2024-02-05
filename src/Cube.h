@@ -1,13 +1,7 @@
 #ifndef CUBE_H
 #define CUBE_H
 
-#include <GL/glew.h>
-#include <glm/vec3.hpp>
 
-#include <vector>
-
-#include "Buffer.h"
-#include "Vao.h"
 
 // creates a cube of given size (length of one face). Creates and binds the vbo and ebo related to the cube, and sets the layout (vertex attribute pointers)
 class Cube
