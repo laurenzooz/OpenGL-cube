@@ -1,5 +1,4 @@
 #include "Buffer.h"
-#include <iostream>
 
 // generates the buffer and saves the type of the buffer
 Buffer::Buffer()
@@ -14,17 +13,12 @@ void Buffer::setType(GLint type)
 
 void Buffer::setData(std::vector <float> &data, GLuint usage)
 {
-	//this->bind(); // the buffer needs to be bind to set the data
-	//std::cout << data[0];
 	glBufferData(type, data.size() * sizeof(float), data.data(), usage);
-	//this->unbind();
 }
 
 void Buffer::setData(std::vector <unsigned int> &data, GLuint usage)
 {
-	//this->bind(); // the buffer needs to be bind to set the data
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, data.size() * sizeof(unsigned int), data.data(), usage);
-	//this->unbind();
 }
 
 void Buffer::bind()
