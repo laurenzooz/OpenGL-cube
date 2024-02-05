@@ -1,16 +1,23 @@
 #ifndef CUBE_H
 #define CUBE_H
 
+#include <GL/glew.h>
+#include <glm/vec3.hpp>
+
+#include <vector>
+
+#include "Buffer.h"
+#include "Vao.h"
 
 
 // creates a cube of given size (length of one face). Creates and binds the vbo and ebo related to the cube, and sets the layout (vertex attribute pointers)
 class Cube
 {
-public:
+	public:
 	Cube(float size = 0.5, glm::vec3 color = glm::vec3(1.0f, 0.0f, 0.0f)); // size 0.5 by default. Color red by default.
 
 	void draw(); // draws the cube
-
+	
 private:
 	float size; 
 	glm::vec3 color;
