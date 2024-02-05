@@ -4,7 +4,7 @@
 #include <GL/glew.h>
 #include <glm/vec3.hpp>
 
-#include <array>
+#include <vector>
 
 #include "Buffer.h"
 #include "Vao.h"
@@ -16,14 +16,14 @@ private:
 	float size; 
 	glm::vec3 color;
 
-	std::array<float, 24> vertices;
+	std::vector<float> vertices; // data for the vertices
 
 
 	Buffer VBO, EBO;
 	Vao VAO;
 
-	// set up the indices matrix
-	unsigned int indices[36] = 
+	// indices to draw the triangles to make the cube (for ebo)
+	std::vector<unsigned int> indices = 
 	{
 		1, 2, 3, 
 		2, 3, 4, 

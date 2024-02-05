@@ -24,18 +24,20 @@ Cube::Cube(float size, glm::vec3 color)
 	// set the EBO type, and then bind the VAO, VBO and EBO
 	EBO.setType(GL_ELEMENT_ARRAY_BUFFER);
 	
-	EBO.bind();
 	VBO.bind();
+	EBO.bind();	
 	VAO.bind();
 
+	// calculate vertex positions with given size of the
+	setVertices();
 
-	
 
 	// set the buffer data
-	EBO.setData(36 * sizeof(int), (void *) indices);
-	VBO.setData(24 * sizeof(float), vertices.data());
+	
+	VBO.setData(vertices);
+	EBO.setData(indices);
 
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 24 * sizeof(float), 0);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), 0);
 	glEnableVertexAttribArray(0);
 	// unbind everything for now
 	//VAO.unbind();
@@ -46,7 +48,6 @@ Cube::Cube(float size, glm::vec3 color)
 void Cube::setVertices()
 {
 	float d = size / 2.0f; // the delta value of how much to be moved from origin
-	d = 0.8f;
 	vertices = 
 	{//	   X 			Y 			Z
 		0.0f - d,  	0.0f - d,  	0.0f - d,
@@ -60,9 +61,6 @@ void Cube::setVertices()
 		0.0f - d, 	0.0f + d, 	0.0f + d
 
 	};
-
-	//vertices = dataa;
-
 }
 
 
@@ -71,5 +69,6 @@ void Cube::draw()
 	VAO.bind();
 	VBO.bind();
 	EBO.bind();
-	glDrawElements(GL_TRIANGLES, 24, GL_UNSIGNED_INT, 0);
+	glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0);
+	//glDrawArrays(GL_POINTS, 0, 8);
 }
