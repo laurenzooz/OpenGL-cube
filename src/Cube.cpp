@@ -1,19 +1,18 @@
 #include "Cube.h"
 
 /*
-	 7		    8
+	 6		    7
 	  +---------+
  	 /         /|
 	+--------+  |
-	|3      4|  + 6
+	|2      3|  + 5
 	|		 | /
 	|        |/
 	+--------+
-	1		2
+	0		1
 
 
 	Middle of the cube at origin. So each corner is 0.5*size to some direction
-	Indices for the ebo would be 123, 234, 246, 468, 135, 357, 567, 678, 347, 478, 125, 256
 	*/
 
 Cube::Cube(float size, glm::vec3 color)
@@ -47,6 +46,7 @@ Cube::Cube(float size, glm::vec3 color)
 	
 }
 
+
 void Cube::setVertices()
 {
 	float d = size / 2.0f; // the delta value of how much to be moved from origin
@@ -54,13 +54,13 @@ void Cube::setVertices()
 	{//	   X 			Y 			Z
 		0.0f - d,  	0.0f - d,  	0.0f - d,
 		0.0f + d, 	0.0f - d, 	0.0f - d,
-		0.0f + d, 	0.0f + d, 	0.0f - d,
 		0.0f - d, 	0.0f + d, 	0.0f - d,
+		0.0f + d, 	0.0f + d, 	0.0f - d,
 
 		0.0f - d, 	0.0f - d, 	0.0f + d,
 		0.0f + d, 	0.0f - d, 	0.0f + d,
-		0.0f + d, 	0.0f + d, 	0.0f + d,
-		0.0f - d, 	0.0f + d, 	0.0f + d
+		0.0f - d, 	0.0f + d, 	0.0f + d,
+		0.0f + d, 	0.0f + d, 	0.0f + d
 
 	};
 }
