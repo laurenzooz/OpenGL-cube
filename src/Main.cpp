@@ -8,6 +8,7 @@
 #include <array>
 
 #include "Cube.h"
+#include "Shader.h"
 
 const unsigned int width = 640;
 const unsigned int height = 480;
@@ -46,9 +47,12 @@ int main()
 	}
 
 
-	// create the cube
+	// Create the cube
 	Cube cube1;
-	
+
+	// Create shaders
+	Shader shaderProgram = Shader("res/shaders/vertexShader.vert", "res/shaders/fragmentShader.frag");
+	glUseProgram(shaderProgram.id);
 
 	// Main loop
 	while (!glfwWindowShouldClose(window))
