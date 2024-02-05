@@ -15,7 +15,8 @@ private:
 	
 	GLuint compile(const char*, GLuint); // compiles the shader given the content of the file
 
-	void getErrors(GLuint);
+	// Writes the errors in either linking or compiling the shader
+	void getErrors(GLuint, bool isLinking = false);
 
 
 

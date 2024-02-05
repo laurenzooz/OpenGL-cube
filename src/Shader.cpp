@@ -32,9 +32,9 @@ Shader::Shader(std::string pathVertex, std::string pathFragment)
 	glLinkProgram(id);
 
 	GLint result;
-	glGetShaderiv(id, GL_LINK_STATUS, &result);
+	glGetProgramiv(id, GL_LINK_STATUS, &result);
 
-	if (result == GL_FALSE) getErrors(id);
+	if (result == GL_FALSE) getErrors(id, true);
 
 	// Delete as these are now unnecessary
 	glDeleteShader(vertexShader);
@@ -87,9 +87,13 @@ GLuint Shader::compile(const char* source, GLuint type)
 
 
 
-void Shader::getErrors(GLuint id)
+void Shader::getErrors(GLuint id, bool isLinking)
 {
 	char message[1024];
-	glGetShaderInfoLog(id, 1024, NULL, message);
+	if (isLinking) // different call to get the error message when linking 
+		glGetProgramInfoLog(id, 1024, NULL, message);
+	else
+		glGetShaderInfoLog(id, 1024, NULL, message);
+
 	std::cout << "Error!\n" <<  message << std::endl; // print the errors
 }
