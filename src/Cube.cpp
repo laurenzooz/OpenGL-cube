@@ -23,26 +23,28 @@ Cube::Cube(float size, glm::vec3 color)
 
 	// set the EBO type, and then bind the VAO, VBO and EBO
 	EBO.setType(GL_ELEMENT_ARRAY_BUFFER);
-	
+
+	VAO.bind();
 	VBO.bind();
 	EBO.bind();	
-	VAO.bind();
+	
 
 	// calculate vertex positions with given size of the
 	setVertices();
 
 
-	// set the buffer data
-	
+	// set the buffer data	
 	VBO.setData(vertices);
 	EBO.setData(indices);
 
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), 0);
 	glEnableVertexAttribArray(0);
+
 	// unbind everything for now
-	//VAO.unbind();
-	//EBO.unbind();
-	//VBO.unbind();
+	VAO.unbind();
+	EBO.unbind();
+	VBO.unbind();
+	
 }
 
 void Cube::setVertices()
@@ -67,8 +69,5 @@ void Cube::setVertices()
 void Cube::draw()
 {
 	VAO.bind();
-	VBO.bind();
-	EBO.bind();
 	glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0);
-	//glDrawArrays(GL_POINTS, 0, 8);
 }
