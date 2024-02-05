@@ -4,9 +4,6 @@
 // Creates an opengl vertex array object
 class Vao
 {
-private:
-	GLuint id;
-	
 public:	
 	
 	Vao();
@@ -14,5 +11,7 @@ public:
 	void bind();
 	void unbind(); 	
 
+private:
+	GLuint id;
 };
 #endif
