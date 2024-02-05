@@ -41,8 +41,8 @@ Cube::Cube(float size, glm::vec3 color)
 
 	// unbind everything for now
 	VAO.unbind();
-	EBO.unbind();
 	VBO.unbind();
+	EBO.unbind();
 	
 }
 
