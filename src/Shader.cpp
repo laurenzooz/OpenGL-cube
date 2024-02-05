@@ -61,15 +61,13 @@ std::string Shader::readFile(std::string& path)
 
 
 GLuint Shader::compile(const char* source, GLuint type)
-{
-
-	//std::cout << source << std::endl;
-
-	glShaderSource(type, 1, &source, NULL); 
+{	
+	// Create the shader and get the id
+	GLuint shaderId = glCreateShader(type);
 	
-	// Attach the shader source
-	GLuint shaderId = glCreateShader(GL_VERTEX_SHADER);
-	
+	// attach the source
+	glShaderSource(shaderId, 1, &source, NULL); 
+
 	// Compile the shader, check for errors, if not any, return the compiled shader id
 	glCompileShader(shaderId);
 
@@ -81,7 +79,7 @@ GLuint Shader::compile(const char* source, GLuint type)
 	if (result == GL_FALSE)
 	{
 		getErrors(shaderId);
-		//return 0;
+		return 0;
 	}
 
 	return shaderId;
