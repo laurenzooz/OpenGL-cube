@@ -18,7 +18,6 @@
 Cube::Cube(float size, glm::vec3 color)
 {
 	this->size = size;
-	this->color = color;
 
 	// set the EBO type, and then bind the VAO, VBO and EBO
 	EBO.setType(GL_ELEMENT_ARRAY_BUFFER);
