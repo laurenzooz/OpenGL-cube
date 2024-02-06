@@ -6,6 +6,8 @@
 #include <fstream>
 #include <sstream>
 #include <array>
+#include <random>
+#include <algorithm>
 #include <glm/vec3.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
@@ -16,8 +18,19 @@
 const unsigned int width = 640;
 const unsigned int height = 480;
 
+float randomFloat() {
+    std::random_device rd;  // Will be used to obtain a seed for the random number engine
+    std::mt19937 gen(rd()); // Standard mersenne_twister_engine seeded with rd()
+    std::uniform_real_distribution<> dis(0.0, 5.0);
+
+
+
+    return dis(gen);
+}
+
 int main()
 {
+	srand(time(0));
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6);
 
@@ -58,18 +71,24 @@ int main()
 	glUseProgram(shaderProgram.id);
 
 	// Create uniform
-	GLint uniformId = glGetUniformLocation(shaderProgram.id, "color");
+	GLint timeUniformId = glGetUniformLocation(shaderProgram.id, "time");
+	GLint coefficientsUniformId = glGetUniformLocation(shaderProgram.id, "coefficients");
+
+	glUniform3f(timeUniformId, 0.5f, 0.2f, 0.9f);
+
+	float time = 0.0f;
 
 	// Main loop
 	while (!glfwWindowShouldClose(window))
 	{
+
+		time += 0.1;
 		glClear(GL_COLOR_BUFFER_BIT);
 
-		// Change the cube objects color
-		cube1.color = glm::vec3(0.5f, 0.1f, 0.5f);
-
+		
 		// Set the uniform value
-		glUniform3f(uniformId, cube1.color[0], cube1.color[1], cube1.color[2]);
+		glUniform1f(timeUniformId, glfwGetTime());
+		glUniform3f(timeUniformId, randomFloat(), randomFloat(), randomFloat());
 
 		// Draw the cube
 		cube1.draw();
