@@ -15,7 +15,7 @@
 	Middle of the cube at origin. So each corner is 0.5*size to some direction
 	*/
 
-Cube::Cube(float size, glm::vec3 color)
+Cube::Cube(float size)
 {
 	this->size = size;
 

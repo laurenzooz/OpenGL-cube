@@ -14,7 +14,7 @@
 class Cube
 {
 public:
-	Cube(float size = 0.5, glm::vec3 color = glm::vec3(1.0f, 0.0f, 0.0f)); // size 0.5 by default. Color red by default.
+	Cube(float size = 0.5); // size 0.5 by default. Color red by default.
 
 	void draw(); // draws the cube
 	
