@@ -6,6 +6,9 @@
 #include <fstream>
 #include <sstream>
 #include <array>
+#include <glm/vec3.hpp>
+#include <glm/gtc/type_ptr.hpp>
+
 
 #include "Cube.h"
 #include "Shader.h"
@@ -54,11 +57,18 @@ int main()
 	Shader shaderProgram = Shader("res/shaders/vertexShader.vert", "res/shaders/fragmentShader.frag");
 	glUseProgram(shaderProgram.id);
 
+	// Create uniform
+	GLint uniformId = glGetUniformLocation(shaderProgram.id, "color");
+
 	// Main loop
 	while (!glfwWindowShouldClose(window))
 	{
 		glClear(GL_COLOR_BUFFER_BIT);
 
+		// Set the uniform value
+		glUniform3f(uniformId, 0.0f, 1.0f, 0.0f);
+
+		// Draw the cube
 		cube1.draw();
 		
 
