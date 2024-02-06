@@ -18,14 +18,11 @@
 const unsigned int width = 640;
 const unsigned int height = 480;
 
-float randomFloat() {
-    std::random_device rd;  // Will be used to obtain a seed for the random number engine
-    std::mt19937 gen(rd()); // Standard mersenne_twister_engine seeded with rd()
-    std::uniform_real_distribution<> dis(0.0, 5.0);
+float randomFloat() 
+{
+	float num = ((float) rand()) / (float) RAND_MAX;
+    return num;
 
-
-
-    return dis(gen);
 }
 
 int main()
@@ -74,21 +71,19 @@ int main()
 	GLint timeUniformId = glGetUniformLocation(shaderProgram.id, "time");
 	GLint coefficientsUniformId = glGetUniformLocation(shaderProgram.id, "coefficients");
 
-	glUniform3f(timeUniformId, 0.5f, 0.2f, 0.9f);
-
-	float time = 0.0f;
+	// Randomize the coefficients 
+	glm::vec3 coeffs = glm::vec3(randomFloat(), randomFloat(), randomFloat());
 
 	// Main loop
 	while (!glfwWindowShouldClose(window))
 	{
 
-		time += 0.1;
 		glClear(GL_COLOR_BUFFER_BIT);
 
 		
 		// Set the uniform value
 		glUniform1f(timeUniformId, glfwGetTime());
-		glUniform3f(timeUniformId, randomFloat(), randomFloat(), randomFloat());
+		glUniform3f(coefficientsUniformId, coeffs[0], coeffs[1], coeffs[2]);
 
 		// Draw the cube
 		cube1.draw();
