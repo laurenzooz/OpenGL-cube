@@ -65,8 +65,11 @@ int main()
 	{
 		glClear(GL_COLOR_BUFFER_BIT);
 
+		// Change the cube objects color
+		cube1.color = glm::vec3(0.5f, 0.1f, 0.5f);
+
 		// Set the uniform value
-		glUniform3f(uniformId, 0.0f, 1.0f, 0.0f);
+		glUniform3f(uniformId, cube1.color[0], cube1.color[1], cube1.color[2]);
 
 		// Draw the cube
 		cube1.draw();
