@@ -19,8 +19,13 @@ Plane::Plane(float size)
 	VBO.setData(vertices);
 	EBO.setData(indices);
 
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), 0);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), 0);
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (float*)(3 * sizeof(float)));
+	glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (float*)(5 * sizeof(float)));
+
 	glEnableVertexAttribArray(0);
+	glEnableVertexAttribArray(1);
+	glEnableVertexAttribArray(2);
 
 	// Unbind everything for now
 	VAO.unbind();
@@ -34,11 +39,11 @@ void Plane::setVertices()
 {
 	float d = size / 2.0f; // the delta value of how much to be moved from origin
 	vertices = 
-	{//	 x, y,  z
-		-d, 0, -d,
-		 d, 0, -d,
-		-d,	0,  d,
-		 d,	0,  d,
+	{//	 x, y,  z,     t,    s,   n.x, n.y, n.z
+		-d, 0.0f, -d, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 
+		 d, 0.0f, -d, 1.0f, 0.0f, 0.0f, 1.0f, 0.0f,
+		-d,	0.0f,  d, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f,
+		 d,	0.0f,  d, 1.0f, 1.0f, 0.0f, 1.0f, 0.0f
 	};
 }
 
