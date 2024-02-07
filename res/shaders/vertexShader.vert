@@ -20,7 +20,7 @@ void main()
 	// Cube's local coordinates -> world coordinates -> coordinates in respect to the camera -> screen coordinates
 	gl_Position = projection * view * model * position;
 
-	// Sine functions to create nice variation in color. Use the rand function for some coefficients
+	// Sine functions to create nice variation in color.
 	vertexColor = vec3((0.5 * sin(time * coefficients[0]) + 0.5), (0.5 * sin(time * coefficients[1]) + 0.5), (0.5 * sin(time * coefficients[2]) + 0.5));
 
 	texCoord = texturePos;
