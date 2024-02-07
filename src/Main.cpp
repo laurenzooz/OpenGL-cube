@@ -147,6 +147,29 @@ int main()
 
 
 
+	// Create Light
+	Cube light = Cube(0.1f);
+
+	Shader lightShader = Shader("res/shaders/lightShader.vert", "res/shaders/lightShader.frag");
+	glUseProgram(lightShader.id);
+
+	// Model, view and projection matrix uniforms, and light color
+	GLint lightModelUid = glGetUniformLocation(lightShader.id, "model");
+	GLint lightViewUid = glGetUniformLocation(lightShader.id, "view");
+	GLint lightProjUid = glGetUniformLocation(lightShader.id, "projection");
+
+	GLint lightColorUid = glGetUniformLocation(lightShader.id, "color");
+
+	// Move down by the cube size so the cube lies flat on the ground
+	glm::mat4 lightModel = glm::translate(glm::mat4(1.0f), glm::vec3(-0.5f, 0.5f, 0.0f)); 
+
+	// Set the uniform values, use same view and projection matrices
+	glUniformMatrix4fv(lightModelUid, 1, GL_FALSE, glm::value_ptr(view)); 
+	glUniformMatrix4fv(lightViewUid, 1, GL_FALSE, glm::value_ptr(projection));
+	glUniformMatrix4fv(lightProjUid, 1, GL_FALSE, glm::value_ptr(lightModel));
+
+	glUniform3f(lightColorUid, 1.0f, 1.0f, 1.0f);
+
 
 	// Initialize imgui 
 	ImGui::CreateContext();
@@ -164,6 +187,10 @@ int main()
 		// Floor
 		glUseProgram(floorShader.id);
 		floor.draw();
+
+		// Light
+		glUseProgram(lightShader.id);
+		light.draw();
 		
 		// cube
 		glUseProgram(shaderProgram.id);
