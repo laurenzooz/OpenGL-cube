@@ -17,5 +17,5 @@ void main()
 	float diffuse = max(dot(normalize(vertexNormal), lightDir), 0.0f); // scalar to scale the light intensity
 	
 
-	fragColor = vec4(0.5f, 0.4f, 0.3f, 1.0f) * vec4(lightColor, 1.0f) * diffuse;;
+	fragColor = vec4(0.5f, 0.4f, 0.3f, 1.0f) * vec4(lightColor, 1.0f) * diffuse;
 }
