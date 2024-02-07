@@ -12,11 +12,11 @@ public:
 	void bind();
 	void unbind();
 
+	GLuint id;
+
 private:
 	int width, height, channels;
-	unsigned char* image;
-
-	GLuint id;
+	unsigned char* image;	
 };
 
 
