@@ -2,20 +2,12 @@
 #include <GLFW/glfw3.h>
 
 #include <iostream>
-#include <string>
-#include <fstream>
-#include <sstream>
-#include <array>
 #include <random>
-#include <algorithm>
 #include <glm/vec3.hpp> // glm::vec3
 #include <glm/vec4.hpp> // glm::vec4
 #include <glm/gtc/matrix_transform.hpp> 
 #include <glm/matrix.hpp>
 #include <glm/gtc/type_ptr.hpp>
-
-
-
 
 #include "Cube.h"
 #include "Shader.h"
