@@ -19,6 +19,7 @@
 
 #include "Cube.h"
 #include "Shader.h"
+#include "Texture.h"
 
 const unsigned int width = 800;
 const unsigned int height = 600;
@@ -66,21 +67,31 @@ int main()
 
 
 	// Create the cube
-	Cube cube1;
+	TexturedCube cube1;
+
+	// Create texture and bind it
+	Texture tex = Texture("res/textures/tex.png");
+	tex.bind();
 
 	// Create shaders and activate the shaderprogram
 	Shader shaderProgram = Shader("res/shaders/vertexShader.vert", "res/shaders/fragmentShader.frag");
 	glUseProgram(shaderProgram.id);
 
-	// Create uniform
+	// Create uniforms
 	GLint timeUniformId = glGetUniformLocation(shaderProgram.id, "time");
 	GLint coefficientsUniformId = glGetUniformLocation(shaderProgram.id, "coefficients");
 
-	// Matrices
+	// Model, view and projection matrices
 	GLint modelMatUniformId = glGetUniformLocation(shaderProgram.id, "model");
 	GLint viewMatUniformId = glGetUniformLocation(shaderProgram.id, "view");
 	GLint projMatUniformId = glGetUniformLocation(shaderProgram.id, "projection");
-	
+
+	// Texture
+	GLint textureUniformId = glGetUniformLocation(shaderProgram.id, "texImg");
+
+
+	// Get the uniform values
+
 	// Randomize the coefficients 
 	glm::vec3 coeffs = glm::vec3(randomFloat(), randomFloat(), randomFloat());
 
@@ -95,6 +106,17 @@ int main()
 	// build the perspective projection matrix
 	projection = glm::perspective(45.0f, (float)width  / (float)height, 0.1f, 100.0f);
 
+
+
+
+	// Set the uniforms that aren't constantly changed
+	glUniform3f(coefficientsUniformId, coeffs[0], coeffs[1], coeffs[2]);
+
+	glUniformMatrix4fv(viewMatUniformId, 1, GL_FALSE, glm::value_ptr(view));
+	glUniformMatrix4fv(projMatUniformId, 1, GL_FALSE, glm::value_ptr(projection));
+
+	glUniform1f(textureUniformId, tex.id);
+
 	
 	// Main loop
 	while (!glfwWindowShouldClose(window))
@@ -108,14 +130,10 @@ int main()
 
 
 		
-		// Set the uniform values
+		// Set the uniform values that change over time
 		glUniform1f(timeUniformId, glfwGetTime());
-		glUniform3f(coefficientsUniformId, coeffs[0], coeffs[1], coeffs[2]);
 
 		glUniformMatrix4fv(modelMatUniformId, 1, GL_FALSE, glm::value_ptr(model));
-		glUniformMatrix4fv(viewMatUniformId, 1, GL_FALSE, glm::value_ptr(view));
-		glUniformMatrix4fv(projMatUniformId, 1, GL_FALSE, glm::value_ptr(projection));
-
 		// Draw the cube
 		cube1.draw();
 		
