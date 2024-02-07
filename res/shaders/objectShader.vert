@@ -2,6 +2,7 @@
 
 layout(location = 0) in vec4 position;
 layout(location = 1) in vec2 texturePos;
+layout(location = 2) in vec3 normal;
 
 uniform float time;
 
@@ -15,10 +16,16 @@ uniform bool colorVariation; // use the color variation over time or not
 
 out vec3 vertexColor;
 out vec2 texCoord;
+out vec3 vertexNormal;
+out vec3 eyePos;
 
 
 void main()
 {
+
+	// get the world position to calculate the stuff for lighting
+	eyePos = vec3(model * position); 
+
 	// Multiply the position of the vertex by the matrices
 	// Cube's local coordinates -> world coordinates -> coordinates in respect to the camera -> screen coordinates
 	gl_Position = projection * view * model * position;
@@ -30,6 +37,7 @@ void main()
 		vertexColor = color;
 
 	texCoord = texturePos;
+	vertexNormal = normal;
 
 }
 
