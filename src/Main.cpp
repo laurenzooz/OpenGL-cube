@@ -68,7 +68,7 @@ int main()
 	// Create the cube
 	Cube cube1;
 
-	// Create shaders
+	// Create shaders and activate the shaderprogram
 	Shader shaderProgram = Shader("res/shaders/vertexShader.vert", "res/shaders/fragmentShader.frag");
 	glUseProgram(shaderProgram.id);
 
