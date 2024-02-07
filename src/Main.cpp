@@ -20,8 +20,8 @@
 #include "Cube.h"
 #include "Shader.h"
 
-const unsigned int width = 640;
-const unsigned int height = 480;
+const unsigned int width = 800;
+const unsigned int height = 600;
 
 float randomFloat() 
 {
