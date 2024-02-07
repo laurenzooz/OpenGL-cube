@@ -185,8 +185,6 @@ int main()
 		ImGui::NewFrame();
 
         ImGui::Begin("OpenGL-cube");
-
-        ImGui::Text("More settings to be added.");
             
         if (ImGui::SliderFloat("X position", &cubePos[0], -1.0f, 1.0f))
 		{
