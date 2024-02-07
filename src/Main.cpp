@@ -54,8 +54,9 @@ int main()
 		return -1;
 	}
 
-	// The light source color
+	// The light source color and position
 	glm::vec3 lightColor = glm::vec3(1.0f, 1.0f, 1.0f);
+	glm::vec3 lightPos = glm::vec3(-0.5f, 0.5f, 0.0f);
 
 
 	// Create the cube
@@ -87,6 +88,7 @@ int main()
 
 	// Light
 	GLint cubeLightUid = glGetUniformLocation(shaderProgram.id, "lightColor");
+	GLint cubeLightPosUid = glGetUniformLocation(shaderProgram.id, "lightPos");
 
 
 
@@ -131,6 +133,8 @@ int main()
 	glUniform1i(cubeUseVariationUid, useVariation);
 
 	glUniform3f(cubeLightUid, lightColor[0], lightColor[1], lightColor[2]);
+	glUniform3f(cubeLightPosUid, lightPos[0], lightPos[1], lightPos[2]);
+
 
 	
 
@@ -149,6 +153,7 @@ int main()
 
 	// Light
 	GLint floorLightUid = glGetUniformLocation(floorShader.id, "lightColor");
+	GLint floorLightPosUid = glGetUniformLocation(floorShader.id, "lightPos");
 
 	// Move down by the cube size so the cube lies flat on the ground
 	glm::mat4 floorModel = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, -0.25f, 0.0f)); 
@@ -159,6 +164,7 @@ int main()
 	glUniformMatrix4fv(floorProjUid, 1, GL_FALSE, glm::value_ptr(floorModel));
 
 	glUniform3f(floorLightUid, lightColor[0], lightColor[1], lightColor[2]);
+	glUniform3f(floorLightPosUid, lightPos[0], lightPos[1], lightPos[2]);
 
 
 
@@ -177,7 +183,7 @@ int main()
 	GLint lightColorUid = glGetUniformLocation(lightShader.id, "color");
 
 	// Move down by the cube size so the cube lies flat on the ground
-	glm::mat4 lightModel = glm::translate(glm::mat4(1.0f), glm::vec3(-0.5f, 0.5f, 0.0f)); 
+	glm::mat4 lightModel = glm::translate(glm::mat4(1.0f), glm::vec3(lightPos[0], lightPos[1], lightPos[2])); 
 
 	// Set the uniform values, use same view and projection matrices
 	glUniformMatrix4fv(lightModelUid, 1, GL_FALSE, glm::value_ptr(view)); 
