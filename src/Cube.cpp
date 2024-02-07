@@ -2,13 +2,13 @@
 
 /*
 	 6		    7
-	  +---------+
+	   --------- 
  	 /         /|
-	+--------+  |
-	|2      3|  + 5
+	 --------   |
+	|2      3|    5
 	|		 | /
 	|        |/
-	+--------+
+	 -------- 
 	0		1
 
 
@@ -51,15 +51,14 @@ void Cube::setVertices()
 	float d = size / 2.0f; // the delta value of how much to be moved from origin
 	vertices = 
 	{//	   X 			Y 			Z
-		0.0f - d,  	0.0f - d,  	0.0f - d,
-		0.0f + d, 	0.0f - d, 	0.0f - d,
-		0.0f - d, 	0.0f + d, 	0.0f - d,
-		0.0f + d, 	0.0f + d, 	0.0f - d,
-
-		0.0f - d, 	0.0f - d, 	0.0f + d,
-		0.0f + d, 	0.0f - d, 	0.0f + d,
-		0.0f - d, 	0.0f + d, 	0.0f + d,
-		0.0f + d, 	0.0f + d, 	0.0f + d
+		-d, -d, -d,
+		 d,	-d, -d,
+		-d,	 d, -d,
+		 d,	 d, -d,
+		-d,	-d,  d,
+		 d,	-d,  d,
+		-d,	 d,  d,
+		 d,	 d,  d
 
 	};
 }
@@ -68,7 +67,7 @@ void Cube::setVertices()
 void Cube::draw()
 {
 	VAO.bind();
-	glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0);
+	glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, 0);
 }
 
 
@@ -113,20 +112,46 @@ TexturedCube::TexturedCube(float size)
 
 
 // textured cube's vertices have also texture position and normals 
+// need more vertices than normal cube to set the normals and tex positions correctly
 void TexturedCube::setVertices()
 {
 	float d = size / 2.0f; // the delta value of how much to be moved from origin
 	vertices = 
-	{//	   X 			Y 			Z		s	t	   n.x	n.y	   n.z
-		0.0f - d,  	0.0f - d,  	0.0f - d, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
-		0.0f + d, 	0.0f - d, 	0.0f - d, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
-		0.0f - d, 	0.0f + d, 	0.0f - d, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
-		0.0f + d, 	0.0f + d, 	0.0f - d, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+	{//	 X   Y	Z	 s	   t	 n.x   n.y	 n.z
+	// Front face
+		-d, -d, -d, 0.0f, 0.0f, 0.0f, 0.0f, -1.0f,
+		 d, -d, -d, 1.0f, 0.0f, 0.0f, 0.0f, -1.0f,
+		-d,  d, -d, 0.0f, 1.0f, 0.0f, 0.0f, -1.0f,
+		 d,  d, -d, 1.0f, 1.0f, 0.0f, 0.0f, -1.0f,
 
-		0.0f - d, 	0.0f - d, 	0.0f + d, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
-		0.0f + d, 	0.0f - d, 	0.0f + d, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
-		0.0f - d, 	0.0f + d, 	0.0f + d, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
-		0.0f + d, 	0.0f + d, 	0.0f + d, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f
+	// Rear face
+		 d, -d,  d, 1.0f, 0.0f, 0.0f, 0.0f, 1.0f,
+		-d, -d,  d, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f,
+		 d,  d,  d, 1.0f, 1.0f, 0.0f, 0.0f, 1.0f,
+		-d,  d,  d, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f,
 
+	// Right face
+		 d, -d, -d, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f,
+		 d, -d,  d, 1.0f, 0.0f, 1.0f, 0.0f, 0.0f,
+		 d,  d, -d, 0.0f, 1.0f, 1.0f, 0.0f, 0.0f,
+		 d,  d,  d, 1.0f, 1.0f, 1.0f, 0.0f, 0.0f,
+
+	// Left face
+		-d, -d, -d, 0.0f, 0.0f, -1.0f, 0.0f, 0.0f,
+		-d, -d,  d, 1.0f, 0.0f, -1.0f, 0.0f, 0.0f,
+		-d,  d, -d, 0.0f, 1.0f, -1.0f, 0.0f, 0.0f,
+		-d,  d,  d, 1.0f, 1.0f, -1.0f, 0.0f, 0.0f,
+
+	// Top face
+		-d, d, -d, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f,
+		 d, d, -d, 1.0f, 0.0f, 0.0f, 1.0f, 0.0f,
+		-d, d,  d, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f,
+		 d, d,  d, 1.0f, 1.0f, 0.0f, 1.0f, 0.0f,
+
+	// Bottom face
+		-d, -d, -d, 0.0f, 0.0f, 0.0f, -1.0f, 0.0f,
+		 d, -d, -d, 1.0f, 0.0f, 0.0f, -1.0f, 0.0f,
+		-d, -d,  d, 0.0f, 1.0f, 0.0f, -1.0f, 0.0f,
+		 d, -d,  d, 1.0f, 1.0f, 0.0f, -1.0f, 0.0f	
 	};
 }

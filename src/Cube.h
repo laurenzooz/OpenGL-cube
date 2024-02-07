@@ -55,6 +55,32 @@ public:
 	TexturedCube(float size = 0.5);
 
 	void setVertices();
+private:
+	// need more vertices to get the texture and normals set properly
+	std::vector<unsigned int> indices = 
+	{
+		0, 1, 2, 
+		1, 2, 3,
+
+		4, 5, 6,
+		5, 6, 7,
+
+		8, 9, 10,
+		9, 10, 11,
+
+		12, 13, 14, 
+		13, 14, 15,
+
+		16, 17, 18,
+		17, 18, 19,
+
+		20, 21, 22,
+		21, 22, 23
+
+		
+
+
+	};
 };
 
 #endif
