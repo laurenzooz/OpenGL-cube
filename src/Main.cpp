@@ -2,7 +2,6 @@
 #include <GLFW/glfw3.h>
 
 #include <iostream>
-#include <random>
 #include <glm/vec3.hpp> // glm::vec3
 #include <glm/vec4.hpp> // glm::vec4
 #include <glm/gtc/matrix_transform.hpp> 
@@ -19,13 +18,6 @@
 
 const unsigned int width = 800;
 const unsigned int height = 600;
-
-float randomFloat() 
-{
-	float num = ((float) rand()) / (float) RAND_MAX;
-    return num;
-
-}
 
 int main()
 {
@@ -63,8 +55,8 @@ int main()
 
 
 	// Create the cube
-	TexturedCube cube1;
-
+	TexturedCube cube;
+	
 	// Create texture and bind it
 	Texture tex = Texture("res/textures/tex.png");
 	tex.bind();
@@ -74,24 +66,24 @@ int main()
 	glUseProgram(shaderProgram.id);
 
 	// Create uniforms
-	GLint timeUniformId = glGetUniformLocation(shaderProgram.id, "time");
-	GLint coefficientsUniformId = glGetUniformLocation(shaderProgram.id, "coefficients");
+	GLint timeUid = glGetUniformLocation(shaderProgram.id, "time");
 
 	// Model, view and projection matrices
-	GLint modelMatUniformId = glGetUniformLocation(shaderProgram.id, "model");
-	GLint viewMatUniformId = glGetUniformLocation(shaderProgram.id, "view");
-	GLint projMatUniformId = glGetUniformLocation(shaderProgram.id, "projection");
+	GLint cubeModelUid = glGetUniformLocation(shaderProgram.id, "model");
+	GLint cubeViewUid = glGetUniformLocation(shaderProgram.id, "view");
+	GLint cubeProjUid = glGetUniformLocation(shaderProgram.id, "projection");
 
 	// Texture
-	GLint textureUniformId = glGetUniformLocation(shaderProgram.id, "texImg");
-	GLint useTextureUniformId = glGetUniformLocation(shaderProgram.id, "useTexture");
+	GLint cubeTextureUid = glGetUniformLocation(shaderProgram.id, "texImg");
+	GLint cubeUseTexUid = glGetUniformLocation(shaderProgram.id, "useTexture");
+
+	// Color
+	GLint cubeColorUid = glGetUniformLocation(shaderProgram.id, "color");
+	GLint cubeUseVariationUid = glGetUniformLocation(shaderProgram.id, "colorVariation"); // wheter to use color variation or not
 
 
 
 	// Get the uniform values
-
-	// Randomize the coefficients 
-	glm::vec3 coeffs = glm::vec3(randomFloat(), randomFloat(), randomFloat());
 
 	// initialize matrices with ones.
 	glm::mat4 model = glm::mat4(1.0f);
@@ -112,21 +104,22 @@ int main()
 	// build the perspective projection matrix
 	projection = glm::perspective(45.0f, (float)width  / (float)height, 0.1f, 100.0f);
 
-	// When not using a texture, set this to false (and the cube will have the chanding color instead)
+	// When not using a texture, set this to false (and the cube will have normal color instead
 	bool useTexture = true; 
-
-
+	bool useVariation = false;  // uniform color or the automatic variation over time
+	glm::vec4 cubeColor = glm::vec4(0.5f, 0.5f, 0.5f, 1.0f); // imgui requires vec4
 
 
 	// Set the uniforms initial state
-	glUniform3f(coefficientsUniformId, coeffs[0], coeffs[1], coeffs[2]);
 
-	glUniformMatrix4fv(viewMatUniformId, 1, GL_FALSE, glm::value_ptr(view));
-	glUniformMatrix4fv(projMatUniformId, 1, GL_FALSE, glm::value_ptr(projection));
+	glUniformMatrix4fv(cubeViewUid, 1, GL_FALSE, glm::value_ptr(view));
+	glUniformMatrix4fv(cubeProjUid, 1, GL_FALSE, glm::value_ptr(projection));
 
-	glUniform1f(textureUniformId, tex.id);
-	glUniform1i(useTextureUniformId, useTexture);
-	
+	glUniform1f(cubeTextureUid, tex.id);
+	glUniform1i(cubeUseTexUid, useTexture);
+
+	glUniform3f(cubeColorUid, cubeColor[0], cubeColor[1], cubeColor[2]);
+	glUniform1i(cubeUseVariationUid, useVariation);
 
 
 	// Initialize imgui 
@@ -142,19 +135,19 @@ int main()
 
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		
-
+		// cube
+		glUseProgram(shaderProgram.id);
 		
 		// Set the uniform values that change over time
-		glUniform1f(timeUniformId, glfwGetTime());
+		glUniform1f(timeUid, glfwGetTime());
 
-		glUniformMatrix4fv(modelMatUniformId, 1, GL_FALSE, glm::value_ptr(model));
+		glUniformMatrix4fv(cubeModelUid, 1, GL_FALSE, glm::value_ptr(model));
 
-		// Draw the cube
-		cube1.draw();
-		
+		// Draw the cube	
+		cube.draw();
+
 
 		// Imgui
-
 		ImGui_ImplOpenGL3_NewFrame();
 		ImGui_ImplGlfw_NewFrame();
 		ImGui::NewFrame();
@@ -180,12 +173,24 @@ int main()
 		if (ImGui::SliderFloat("Rotate around Z", &rotation[2], -180.0f, 180.0f))
 			model = glm::rotate(model, glm::radians(prevRotation[2] - rotation[2]), glm::vec3(0.0f, 0.0f, 1.0f));
 
-
+		// Toggle texture
 		if (ImGui::RadioButton("Texture", useTexture))
 		{
 			if (useTexture) useTexture = false; else useTexture = true;
-			glUniform1i(useTextureUniformId, useTexture); // only set the uniform if the button status changes
+			glUniform1i(cubeUseTexUid, useTexture); // only set the uniform if the button status changes
 		}
+		
+		// Toggle color variation
+		if (!useTexture && ImGui::RadioButton("Color variation", useVariation))
+		{
+			if (useVariation) useVariation = false; else useVariation = true;
+			glUniform1i(cubeUseVariationUid, useVariation);
+		}
+
+		// Select custom color when not using variation or texture
+		if (!useTexture && !useVariation && ImGui::ColorEdit3("Select color", glm::value_ptr(cubeColor)))	
+			glUniform3f(cubeColorUid, cubeColor[0], cubeColor[1], cubeColor[2]);
+		
 			
 
 
@@ -196,6 +201,11 @@ int main()
 		
 		prevDistance = distance;
 		prevRotation = rotation;
+
+
+
+
+		
 
 		glfwSwapBuffers(window);
 		glfwPollEvents();
