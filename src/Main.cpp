@@ -8,8 +8,13 @@
 #include <array>
 #include <random>
 #include <algorithm>
-#include <glm/vec3.hpp>
+#include <glm/vec3.hpp> // glm::vec3
+#include <glm/vec4.hpp> // glm::vec4
+#include <glm/gtc/matrix_transform.hpp> 
+#include <glm/matrix.hpp>
 #include <glm/gtc/type_ptr.hpp>
+
+
 
 
 #include "Cube.h"
@@ -71,8 +76,26 @@ int main()
 	GLint timeUniformId = glGetUniformLocation(shaderProgram.id, "time");
 	GLint coefficientsUniformId = glGetUniformLocation(shaderProgram.id, "coefficients");
 
+	// Matrices
+	GLint modelMatUniformId = glGetUniformLocation(shaderProgram.id, "model");
+	GLint viewMatUniformId = glGetUniformLocation(shaderProgram.id, "view");
+	GLint projMatUniformId = glGetUniformLocation(shaderProgram.id, "projection");
+	
 	// Randomize the coefficients 
 	glm::vec3 coeffs = glm::vec3(randomFloat(), randomFloat(), randomFloat());
+
+	// initialize matrices with ones.
+	glm::mat4 model = glm::mat4(1.0f);
+	glm::mat4 view = glm::mat4(1.0f);
+	glm::mat4 projection = glm::mat4(1.0f);
+	
+	// move model up and further from camera
+	model = glm::translate(model, glm::vec3(0.0f, 0.0f, -0.0f)); 
+
+	projection = glm::perspective(45.0f, (float)height  / (float)width, 0.1f, 100.0f);
+
+	
+
 
 	// Main loop
 	while (!glfwWindowShouldClose(window))
@@ -81,9 +104,13 @@ int main()
 		glClear(GL_COLOR_BUFFER_BIT);
 
 		
-		// Set the uniform value
+		// Set the uniform values
 		glUniform1f(timeUniformId, glfwGetTime());
 		glUniform3f(coefficientsUniformId, coeffs[0], coeffs[1], coeffs[2]);
+
+		glUniformMatrix4fv(modelMatUniformId, 1, GL_FALSE, glm::value_ptr(model));
+		glUniformMatrix4fv(viewMatUniformId, 1, GL_FALSE, glm::value_ptr(view));
+		glUniformMatrix4fv(projMatUniformId, 1, GL_FALSE, glm::value_ptr(projection));
 
 		// Draw the cube
 		cube1.draw();
