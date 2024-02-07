@@ -1,6 +1,7 @@
 #version 460 core
 
 layout(location = 0) in vec4 position;
+layout(location = 1) in vec2 texturePos;
 
 uniform float time;
 uniform vec3 coefficients; // randomized coefficients
@@ -11,7 +12,7 @@ uniform mat4 view;
 uniform mat4 projection;
 
 out vec3 vertexColor;
-
+out vec2 texCoord;
 
 void main()
 {
@@ -21,6 +22,9 @@ void main()
 
 	// Sine functions to create nice variation in color. Use the rand function for some coefficients
 	vertexColor = vec3((0.5 * sin(time * coefficients[0]) + 0.5), (0.5 * sin(time * coefficients[1]) + 0.5), (0.5 * sin(time * coefficients[2]) + 0.5));
+
+	texCoord = texturePos;
+
 }
 
 
