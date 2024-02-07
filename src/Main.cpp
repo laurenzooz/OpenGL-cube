@@ -13,6 +13,7 @@
 #include "../imgui/imgui_impl_opengl3.h"
 
 #include "Cube.h"
+#include "Plane.h"
 #include "Shader.h"
 #include "Texture.h"
 
@@ -62,7 +63,7 @@ int main()
 	tex.bind();
 
 	// Create shaders and activate the shaderprogram
-	Shader shaderProgram = Shader("res/shaders/vertexShader.vert", "res/shaders/fragmentShader.frag");
+	Shader shaderProgram = Shader("res/shaders/objectShader.vert", "res/shaders/objectShader.frag");
 	glUseProgram(shaderProgram.id);
 
 	// Create uniforms
@@ -91,16 +92,19 @@ int main()
 	glm::mat4 projection = glm::mat4(1.0f);
 	
 
-	// Translations and rotations
-	float distance = 2.0f;
-	// save the old one to calculate the difference to new one to know how much needs to be moved
-	float prevDistance = distance; 
-	model = glm::translate(model, glm::vec3(0.0f, 0.0f, -distance)); 
+	// Set the initial position and projections
+	glm::vec2 cubePos = glm::vec2(0.0f, 0.0f); // x, z on the flat plane
+	glm::vec2 prevCubePos = cubePos; // save to know the translation amount when moving from the menu
+	model = glm::translate(model, glm::vec3(cubePos[0], 0.0f, cubePos[1])); 
 
-	glm::vec3 rotation = glm::vec3(0.0f, 0.0f, 0.0f); // keep track of the rotations around different axes
-	glm::vec3 prevRotation = rotation;
-	
-	
+	float rotation = 0.0f; // angle around y axis
+	float prevRotation = 0.0f;
+
+
+	// View matrix
+	glm::vec3 eyePos = glm::vec3(2.0f, 2.0f, 2.0f); 
+	view = glm::lookAt(eyePos, glm::normalize(glm::vec3(0.0f, -0.5f, 0.0f) - eyePos), glm::vec3(0.0f, 1.0f, 0.0f));
+
 	// build the perspective projection matrix
 	projection = glm::perspective(45.0f, (float)width  / (float)height, 0.1f, 100.0f);
 
@@ -111,7 +115,6 @@ int main()
 
 
 	// Set the uniforms initial state
-
 	glUniformMatrix4fv(cubeViewUid, 1, GL_FALSE, glm::value_ptr(view));
 	glUniformMatrix4fv(cubeProjUid, 1, GL_FALSE, glm::value_ptr(projection));
 
@@ -120,6 +123,29 @@ int main()
 
 	glUniform3f(cubeColorUid, cubeColor[0], cubeColor[1], cubeColor[2]);
 	glUniform1i(cubeUseVariationUid, useVariation);
+
+
+
+	// Create floor
+	Plane floor(5.0f);
+	// Create shaders and activate the shaderprogram
+	Shader floorShader = Shader("res/shaders/groundShader.vert", "res/shaders/groundShader.frag");
+	glUseProgram(floorShader.id);
+
+	// Model, view and projection matrix uniforms
+	GLint floorModelUid = glGetUniformLocation(floorShader.id, "model");
+	GLint floorViewUid = glGetUniformLocation(floorShader.id, "view");
+	GLint floorProjUid = glGetUniformLocation(floorShader.id, "projection");
+
+	// Move down by the cube size so the cube lies flat on the ground
+	glm::mat4 floorModel = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, -0.25f, 0.0f)); 
+
+	// Set the uniform values, use same view and projection matrices
+	glUniformMatrix4fv(floorModelUid, 1, GL_FALSE, glm::value_ptr(view)); 
+	glUniformMatrix4fv(floorViewUid, 1, GL_FALSE, glm::value_ptr(projection));
+	glUniformMatrix4fv(floorProjUid, 1, GL_FALSE, glm::value_ptr(floorModel));
+
+
 
 
 	// Initialize imgui 
@@ -134,6 +160,10 @@ int main()
 	{
 
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+		// Floor
+		glUseProgram(floorShader.id);
+		floor.draw();
 		
 		// cube
 		glUseProgram(shaderProgram.id);
@@ -146,6 +176,8 @@ int main()
 		// Draw the cube	
 		cube.draw();
 
+		
+
 
 		// Imgui
 		ImGui_ImplOpenGL3_NewFrame();
@@ -156,23 +188,23 @@ int main()
 
         ImGui::Text("More settings to be added.");
             
-        if (ImGui::SliderFloat("Distance", &distance, 1.0f, 5.0f))
+        if (ImGui::SliderFloat("X position", &cubePos[0], -1.0f, 1.0f))
 		{
 			// Calculate like this so the slider moves the cube towards user, not towards the front of the cube
-			glm::mat4 translate = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, prevDistance - distance));
+			glm::mat4 translate = glm::translate(glm::mat4(1.0f), glm::vec3(prevCubePos[0] - cubePos[0], 0.0f, 0.0f));
 			model = translate * model; 
 		}
-			
-		
-		if (ImGui::SliderFloat("Rotate around X", &rotation[0], -180.0f, 180.0f))
-			model = glm::rotate(model, glm::radians(prevRotation[0] - rotation[0]), glm::vec3(1.0f, 0.0f, 0.0f));
-		
-		if (ImGui::SliderFloat("Rotate around Y", &rotation[1], -180.0f, 180.0f))
-			model = glm::rotate(model, glm::radians(prevRotation[1] - rotation[1]), glm::vec3(0.0f, 1.0f, 0.0f));
-		
-		if (ImGui::SliderFloat("Rotate around Z", &rotation[2], -180.0f, 180.0f))
-			model = glm::rotate(model, glm::radians(prevRotation[2] - rotation[2]), glm::vec3(0.0f, 0.0f, 1.0f));
 
+		if (ImGui::SliderFloat("Z position", &cubePos[1], -1.0f, 1.0f))
+		{
+			glm::mat4 translate = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, prevCubePos[1] - cubePos[1]));
+			model = translate * model; 
+		}
+	
+		if (ImGui::SliderFloat("Rotate", &rotation, -180.0f, 180.0f))
+			model = glm::rotate(model, glm::radians(prevRotation - rotation), glm::vec3(0.0f, 1.0f, 0.0f));
+		
+		
 		// Toggle texture
 		if (ImGui::RadioButton("Texture", useTexture))
 		{
@@ -199,9 +231,8 @@ int main()
 		ImGui::Render();
 		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 		
-		prevDistance = distance;
+		prevCubePos = cubePos;
 		prevRotation = rotation;
-
 
 
 
