@@ -111,14 +111,14 @@ int main()
 
 
 
-
-	// Set the uniforms that aren't constantly changed
+	// Set the uniforms initial state
 	glUniform3f(coefficientsUniformId, coeffs[0], coeffs[1], coeffs[2]);
 
 	glUniformMatrix4fv(viewMatUniformId, 1, GL_FALSE, glm::value_ptr(view));
 	glUniformMatrix4fv(projMatUniformId, 1, GL_FALSE, glm::value_ptr(projection));
 
 	glUniform1f(textureUniformId, tex.id);
+	glUniform1i(useTextureUniformId, useTexture);
 	
 
 
@@ -165,8 +165,11 @@ int main()
         ImGui::SliderFloat("Rotate speed", &rotateSpeed, 0.0f, 0.1f);
 
 		if (ImGui::RadioButton("Texture", useTexture))
+		{
 			if (useTexture) useTexture = false; else useTexture = true;
 			glUniform1i(useTextureUniformId, useTexture); // only set the uniform if the button status changes
+		}
+			
 
 
 		ImGui::End();
