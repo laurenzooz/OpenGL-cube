@@ -99,11 +99,14 @@ int main()
 	glm::mat4 projection = glm::mat4(1.0f);
 	
 
-	// zoom
+	// Translations and rotations
 	float distance = 2.0f;
-	float oldDistance = distance; // to keep track of the amount needed to be zoomed
+	// save the old one to calculate the difference to new one to know how much needs to be moved
+	float prevDistance = distance; 
 	model = glm::translate(model, glm::vec3(0.0f, 0.0f, -distance)); 
-	float rotateSpeed = 0.01f;
+
+	glm::vec3 rotation = glm::vec3(0.0f, 0.0f, 0.0f); // keep track of the rotations around different axes
+	glm::vec3 prevRotation = rotation;
 	
 	
 	// build the perspective projection matrix
@@ -140,11 +143,6 @@ int main()
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		
 
-		// Make the cube spin
-		model = glm::rotate(model, rotateSpeed, glm::vec3(0.2f, 0.8f, 0.0f));
-
-		
-
 		
 		// Set the uniform values that change over time
 		glUniform1f(timeUniformId, glfwGetTime());
@@ -165,12 +163,23 @@ int main()
 
         ImGui::Text("More settings to be added.");
             
-        ImGui::SliderFloat("Rotate speed", &rotateSpeed, 0.0f, 0.1f);
-        if (ImGui::SliderFloat("Distance", &distance, 1.0f, 5.0f));
+        if (ImGui::SliderFloat("Distance", &distance, 1.0f, 5.0f))
 		{
-			glm::mat4 translation = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, oldDistance - distance));
-			model = translation * model; // calculate the translation matrix needed and multiply with the current, rotated model matrix
+			// Calculate like this so the slider moves the cube towards user, not towards the front of the cube
+			glm::mat4 translate = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, prevDistance - distance));
+			model = translate * model; 
 		}
+			
+		
+		if (ImGui::SliderFloat("Rotate around X", &rotation[0], -180.0f, 180.0f))
+			model = glm::rotate(model, glm::radians(prevRotation[0] - rotation[0]), glm::vec3(1.0f, 0.0f, 0.0f));
+		
+		if (ImGui::SliderFloat("Rotate around Y", &rotation[1], -180.0f, 180.0f))
+			model = glm::rotate(model, glm::radians(prevRotation[1] - rotation[1]), glm::vec3(0.0f, 1.0f, 0.0f));
+		
+		if (ImGui::SliderFloat("Rotate around Z", &rotation[2], -180.0f, 180.0f))
+			model = glm::rotate(model, glm::radians(prevRotation[2] - rotation[2]), glm::vec3(0.0f, 0.0f, 1.0f));
+
 
 		if (ImGui::RadioButton("Texture", useTexture))
 		{
@@ -185,7 +194,8 @@ int main()
 		ImGui::Render();
 		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 		
-		oldDistance = distance;
+		prevDistance = distance;
+		prevRotation = rotation;
 
 		glfwSwapBuffers(window);
 		glfwPollEvents();
