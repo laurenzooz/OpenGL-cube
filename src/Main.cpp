@@ -9,6 +9,10 @@
 #include <glm/matrix.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
+#include "../imgui/imgui.h"
+#include "../imgui/imgui_impl_glfw.h"
+#include "../imgui/imgui_impl_opengl3.h"
+
 #include "Cube.h"
 #include "Shader.h"
 #include "Texture.h"
@@ -94,8 +98,10 @@ int main()
 	glm::mat4 view = glm::mat4(1.0f);
 	glm::mat4 projection = glm::mat4(1.0f);
 	
-	// move model up and further from camera
+
 	model = glm::translate(model, glm::vec3(0.0f, 0.0f, -2.0f)); 
+	float rotateSpeed = 0.01f;
+	
 	
 	// build the perspective projection matrix
 	projection = glm::perspective(45.0f, (float)width  / (float)height, 0.1f, 100.0f);
@@ -113,9 +119,14 @@ int main()
 	glUniformMatrix4fv(projMatUniformId, 1, GL_FALSE, glm::value_ptr(projection));
 
 	glUniform1f(textureUniformId, tex.id);
-	glUniform1i(useTextureUniformId, useTexture);
-
 	
+
+
+	// Initialize imgui 
+	ImGui::CreateContext();
+	ImGui::StyleColorsDark();
+	ImGui_ImplGlfw_InitForOpenGL(window, true);
+	ImGui_ImplOpenGL3_Init();
 
 	glEnable(GL_DEPTH_TEST);
 	// Main loop
@@ -126,16 +137,42 @@ int main()
 		
 
 		// Make the cube spin
-		model = glm::rotate(model, 0.01f, glm::vec3(0.2f, 0.8f, 0.0f));
-
+		model = glm::rotate(model, rotateSpeed, glm::vec3(0.2f, 0.8f, 0.0f));
+		
 
 		
 		// Set the uniform values that change over time
 		glUniform1f(timeUniformId, glfwGetTime());
 
 		glUniformMatrix4fv(modelMatUniformId, 1, GL_FALSE, glm::value_ptr(model));
+		
+
+		
 		// Draw the cube
 		cube1.draw();
+
+
+		// Imgui
+
+		ImGui_ImplOpenGL3_NewFrame();
+		ImGui_ImplGlfw_NewFrame();
+		ImGui::NewFrame();
+
+        ImGui::Begin("OpenGL-cube");
+
+        ImGui::Text("More settings to be added.");
+            
+        ImGui::SliderFloat("Rotate speed", &rotateSpeed, 0.0f, 0.1f);
+
+		if (ImGui::RadioButton("Texture", useTexture))
+			if (useTexture) useTexture = false; else useTexture = true;
+			glUniform1i(useTextureUniformId, useTexture); // only set the uniform if the button status changes
+
+
+		ImGui::End();
+
+		ImGui::Render();
+		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 		
 
 		glfwSwapBuffers(window);

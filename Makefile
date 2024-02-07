@@ -5,7 +5,7 @@ CXXFLAGS = -Wall -Wextra -std=c++17
 LIBS = -lglfw -lGL -lGLEW
 
 # Source files
-SRCS = $(wildcard src/*.cpp)
+SRCS = $(wildcard src/*.cpp) $(wildcard imgui/*.cpp)
 
 # Object files
 OBJS = $(SRCS:.cpp=.o)
