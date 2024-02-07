@@ -70,3 +70,63 @@ void Cube::draw()
 	VAO.bind();
 	glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0);
 }
+
+
+
+/// Textured cube
+
+// constructor slightly different as the vertex attrib array is different
+TexturedCube::TexturedCube(float size)
+{
+	this->size = size;
+
+	// set the EBO type, and then bind the VAO, VBO and EBO
+	EBO.setType(GL_ELEMENT_ARRAY_BUFFER);
+
+	VAO.bind();
+	VBO.bind();
+	EBO.bind();	
+	
+
+	// calculate vertex positions with given size of the cube
+	setVertices();
+
+	// set the buffer data	
+	VBO.setData(vertices);
+	EBO.setData(indices);
+
+	// Set the layout and enable
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), 0);
+	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(3 * sizeof(float)));
+	glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(5 * sizeof(float)));
+	
+	glEnableVertexAttribArray(0);
+	glEnableVertexAttribArray(1);
+	glEnableVertexAttribArray(2);
+
+	// unbind everything for now
+	VAO.unbind();
+	VBO.unbind();
+	EBO.unbind();
+	
+}
+
+
+// textured cube's vertices have also texture position and normals 
+void TexturedCube::setVertices()
+{
+	float d = size / 2.0f; // the delta value of how much to be moved from origin
+	vertices = 
+	{//	   X 			Y 			Z		s	t	   n.x	n.y	   n.z
+		0.0f - d,  	0.0f - d,  	0.0f - d, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+		0.0f + d, 	0.0f - d, 	0.0f - d, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+		0.0f - d, 	0.0f + d, 	0.0f - d, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+		0.0f + d, 	0.0f + d, 	0.0f - d, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+
+		0.0f - d, 	0.0f - d, 	0.0f + d, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+		0.0f + d, 	0.0f - d, 	0.0f + d, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+		0.0f - d, 	0.0f + d, 	0.0f + d, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+		0.0f + d, 	0.0f + d, 	0.0f + d, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f
+
+	};
+}

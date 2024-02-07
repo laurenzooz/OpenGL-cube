@@ -10,7 +10,7 @@
 #include "Vao.h"
 
 
-// creates a cube of given size (length of one face). Creates and binds the vbo and ebo related to the cube, and sets the layout (vertex attribute pointers)
+// creates a default, untextured cube of given size (length of one face). Creates and binds the vbo and ebo related to the cube, and sets the layout (vertex attribute pointers)
 class Cube
 {
 public:
@@ -18,7 +18,7 @@ public:
 
 	void draw(); // draws the cube
 	
-private:
+protected:
 	float size; 
 	
 	std::vector<float> vertices; // data for the vertices
@@ -48,6 +48,13 @@ private:
 
 };
 
+// Cube that has texture position and normals stored in the vertices
+class TexturedCube : public Cube
+{
+public:
+	TexturedCube(float size = 0.5);
 
+	void setVertices();
+};
 
 #endif
