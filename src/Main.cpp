@@ -54,6 +54,9 @@ int main()
 		return -1;
 	}
 
+	// The light source color
+	glm::vec3 lightColor = glm::vec3(1.0f, 1.0f, 1.0f);
+
 
 	// Create the cube
 	TexturedCube cube;
@@ -81,6 +84,9 @@ int main()
 	// Color
 	GLint cubeColorUid = glGetUniformLocation(shaderProgram.id, "color");
 	GLint cubeUseVariationUid = glGetUniformLocation(shaderProgram.id, "colorVariation"); // wheter to use color variation or not
+
+	// Light
+	GLint cubeLightUid = glGetUniformLocation(shaderProgram.id, "lightColor");
 
 
 
@@ -124,6 +130,10 @@ int main()
 	glUniform3f(cubeColorUid, cubeColor[0], cubeColor[1], cubeColor[2]);
 	glUniform1i(cubeUseVariationUid, useVariation);
 
+	glUniform3f(cubeLightUid, lightColor[0], lightColor[1], lightColor[2]);
+
+	
+
 
 
 	// Create floor
@@ -137,6 +147,9 @@ int main()
 	GLint floorViewUid = glGetUniformLocation(floorShader.id, "view");
 	GLint floorProjUid = glGetUniformLocation(floorShader.id, "projection");
 
+	// Light
+	GLint floorLightUid = glGetUniformLocation(floorShader.id, "lightColor");
+
 	// Move down by the cube size so the cube lies flat on the ground
 	glm::mat4 floorModel = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, -0.25f, 0.0f)); 
 
@@ -144,6 +157,9 @@ int main()
 	glUniformMatrix4fv(floorModelUid, 1, GL_FALSE, glm::value_ptr(view)); 
 	glUniformMatrix4fv(floorViewUid, 1, GL_FALSE, glm::value_ptr(projection));
 	glUniformMatrix4fv(floorProjUid, 1, GL_FALSE, glm::value_ptr(floorModel));
+
+	glUniform3f(floorLightUid, lightColor[0], lightColor[1], lightColor[2]);
+
 
 
 
@@ -168,8 +184,13 @@ int main()
 	glUniformMatrix4fv(lightViewUid, 1, GL_FALSE, glm::value_ptr(projection));
 	glUniformMatrix4fv(lightProjUid, 1, GL_FALSE, glm::value_ptr(lightModel));
 
-	glUniform3f(lightColorUid, 1.0f, 1.0f, 1.0f);
+	
 
+	// Set the light color uniform
+	glUniform3f(lightColorUid, lightColor[0], lightColor[1], lightColor[2]);
+
+
+	
 
 	// Initialize imgui 
 	ImGui::CreateContext();
