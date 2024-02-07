@@ -99,7 +99,10 @@ int main()
 	glm::mat4 projection = glm::mat4(1.0f);
 	
 
-	model = glm::translate(model, glm::vec3(0.0f, 0.0f, -2.0f)); 
+	// zoom
+	float distance = 2.0f;
+	float oldDistance = distance; // to keep track of the amount needed to be zoomed
+	model = glm::translate(model, glm::vec3(0.0f, 0.0f, -distance)); 
 	float rotateSpeed = 0.01f;
 	
 	
@@ -108,6 +111,7 @@ int main()
 
 	// When not using a texture, set this to false (and the cube will have the chanding color instead)
 	bool useTexture = true; 
+
 
 
 
@@ -138,6 +142,7 @@ int main()
 
 		// Make the cube spin
 		model = glm::rotate(model, rotateSpeed, glm::vec3(0.2f, 0.8f, 0.0f));
+
 		
 
 		
@@ -145,12 +150,10 @@ int main()
 		glUniform1f(timeUniformId, glfwGetTime());
 
 		glUniformMatrix4fv(modelMatUniformId, 1, GL_FALSE, glm::value_ptr(model));
-		
 
-		
 		// Draw the cube
 		cube1.draw();
-
+		
 
 		// Imgui
 
@@ -163,6 +166,11 @@ int main()
         ImGui::Text("More settings to be added.");
             
         ImGui::SliderFloat("Rotate speed", &rotateSpeed, 0.0f, 0.1f);
+        if (ImGui::SliderFloat("Distance", &distance, 1.0f, 5.0f));
+		{
+			glm::mat4 translation = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, oldDistance - distance));
+			model = translation * model; // calculate the translation matrix needed and multiply with the current, rotated model matrix
+		}
 
 		if (ImGui::RadioButton("Texture", useTexture))
 		{
@@ -177,6 +185,7 @@ int main()
 		ImGui::Render();
 		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 		
+		oldDistance = distance;
 
 		glfwSwapBuffers(window);
 		glfwPollEvents();
