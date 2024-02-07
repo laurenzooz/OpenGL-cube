@@ -7,8 +7,13 @@ in vec2 texCoord;
 
 uniform sampler2D texImg;
 
+uniform bool useTexture; // Wheter to use normal color or a texture
+
 void main()
 {
-	//fragColor = vec4(vertexColor, 1.0f);
-	fragColor = texture(texImg, texCoord);
+	if (useTexture) 
+		fragColor = texture(texImg, texCoord);
+	else 
+		fragColor = vec4(vertexColor, 1.0f);
+	
 }

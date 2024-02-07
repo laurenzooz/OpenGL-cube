@@ -88,6 +88,8 @@ int main()
 
 	// Texture
 	GLint textureUniformId = glGetUniformLocation(shaderProgram.id, "texImg");
+	GLint useTextureUniformId = glGetUniformLocation(shaderProgram.id, "useTexture");
+
 
 
 	// Get the uniform values
@@ -106,6 +108,9 @@ int main()
 	// build the perspective projection matrix
 	projection = glm::perspective(45.0f, (float)width  / (float)height, 0.1f, 100.0f);
 
+	// When not using a texture, set this to false (and the cube will have the chanding color instead)
+	bool useTexture = true; 
+
 
 
 
@@ -116,13 +121,16 @@ int main()
 	glUniformMatrix4fv(projMatUniformId, 1, GL_FALSE, glm::value_ptr(projection));
 
 	glUniform1f(textureUniformId, tex.id);
+	glUniform1i(useTextureUniformId, useTexture);
 
 	
+
+	glEnable(GL_DEPTH_TEST);
 	// Main loop
 	while (!glfwWindowShouldClose(window))
 	{
 
-		glClear(GL_COLOR_BUFFER_BIT);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		
 
 		// Make the cube spin
