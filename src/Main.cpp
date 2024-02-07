@@ -89,10 +89,12 @@ int main()
 	glm::mat4 view = glm::mat4(1.0f);
 	glm::mat4 projection = glm::mat4(1.0f);
 	
-	// move model up and further from camera
-	model = glm::translate(model, glm::vec3(0.0f, 0.0f, -0.0f)); 
+	// move model up and further from camera, then rotate slightly
+	model = glm::translate(model, glm::vec3(0.0f, 0.0f, -2.0f)); 
+	model = glm::rotate(model, 45.0f, glm::vec3(0.2f, 0.8f, 0.0f));
 
-	projection = glm::perspective(45.0f, (float)height  / (float)width, 0.1f, 100.0f);
+	// build the perspective projection matrix
+	projection = glm::perspective(45.0f, (float)width  / (float)height, 0.1f, 100.0f);
 
 	
 
