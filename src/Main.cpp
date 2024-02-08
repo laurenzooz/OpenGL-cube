@@ -21,10 +21,43 @@ const unsigned int width = 800;
 const unsigned int height = 600;
 
 
-glm::mat4 moveCamera(glm::vec3 &eyePos, glm::vec3 &eyeDir)
+
+// Camera movement
+glm::mat4 moveCamera(GLFWwindow* window, glm::vec3 &eyePos, glm::vec3 &eyeDir)
 {
-	//eyePos = eyePos + 1.1f * eyeDir;
-	eyePos = eyePos + (glm::normalize(eyeDir) * 0.1f);
+	
+	float speed = 0.1f;
+	glm::vec3 direction = glm::normalize(eyeDir);
+
+	// Key inputs to move
+	if (glfwGetKey(window, GLFW_KEY_PERIOD) == GLFW_PRESS) eyePos += direction * speed; // forward
+	if (glfwGetKey(window, GLFW_KEY_COMMA) == GLFW_PRESS) eyePos -= direction * speed; // back
+
+	if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) 
+	{
+		eyePos += glm::vec3(0.0f, 1.0f, 0.0f) * speed; // Up
+		eyeDir += glm::vec3(0.0f, 1.0f, 0.0f) * speed; // Move the "aiming point" as well, so the camera moves straight up
+
+	}
+
+	if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS) 
+	{
+		eyePos += glm::vec3(-1.0f, 0.0f, 0.0f) * speed; // Left
+		eyeDir += glm::vec3(-1.0f, 0.0f, 0.0f) * speed; // Left
+	}
+
+	if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS) 
+	{
+		eyePos += glm::vec3(0.0f, -1.0f, 0.0f) * speed; // Down
+		eyeDir += glm::vec3(0.0f, -1.0f, 0.0f) * speed;
+	}
+
+	if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) 
+	{
+		eyePos += glm::vec3(1.0f, 0.0f, 0.0f) * speed; // Right
+		eyeDir += glm::vec3(1.0f, 0.0f, 0.0f) * speed;
+	}
+	
 	return glm::lookAt(eyePos, eyeDir, glm::vec3(0.0f, 1.0f, 0.0f));
 }
 
@@ -37,9 +70,10 @@ int main()
 
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
-
-	// Create window and initialize glfw
+	// Create window handle
 	GLFWwindow* window;
+
+	// initialize glfw
 	if (!glfwInit()) 
 	{
 		std::cout << "Failed GLFW initialization" << std::endl;
@@ -155,7 +189,7 @@ int main()
 
 
 	// Create floor
-	Plane floor(5.0f);
+	Plane floor(2.0f);
 	// Create shaders and activate the shaderprogram
 	Shader floorShader = Shader("res/shaders/groundShader.vert", "res/shaders/groundShader.frag");
 	glUseProgram(floorShader.id);
@@ -297,14 +331,14 @@ int main()
 		if (!useTexture && !useVariation && ImGui::ColorEdit3("Select color", glm::value_ptr(cubeColor)))	
 			glUniform3f(cubeColorUid, cubeColor[0], cubeColor[1], cubeColor[2]);
 		
-		if (ImGui::Button("Zoom"))	
-			view = moveCamera(eyePos, eyeDir);
-
-
+		
 		ImGui::End();
 
 		ImGui::Render();
 		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+
+		// Camera movement
+		view = moveCamera(window, eyePos, eyeDir);
 		
 		prevCubePos = cubePos;
 		prevRotation = rotation;
@@ -320,3 +354,8 @@ int main()
 
 	return 0;
 }
+
+
+
+
+
