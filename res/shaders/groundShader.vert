@@ -9,16 +9,22 @@ uniform mat4 model;
 uniform mat4 view;
 uniform mat4 projection;
 
+uniform vec3 lightPos;
+
+
 out vec3 vertexNormal;
-out vec3 eyePos;
+out vec3 lightDir;
+
 
 void main()
 {
-	eyePos = vec3(model * position); 
 
 	gl_Position = projection * view * model * position;
 
-	vertexNormal = normal;
+	vec3 eyePos = vec3(model * position); 
+	lightDir = normalize(lightPos - eyePos);
+
+	vertexNormal = normalize(mat3(transpose(inverse(model))) * normal);
 
 }
 

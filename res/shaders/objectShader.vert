@@ -14,17 +14,16 @@ uniform mat4 projection;
 uniform vec3 color;
 uniform bool colorVariation; // use the color variation over time or not
 
+uniform vec3 lightPos;
+
 out vec3 vertexColor;
 out vec2 texCoord;
 out vec3 vertexNormal;
-out vec3 eyePos;
+out vec3 lightDir;
 
 
 void main()
 {
-
-	// get the world position to calculate the stuff for lighting
-	eyePos = vec3(model * position); 
 
 	// Multiply the position of the vertex by the matrices
 	// Cube's local coordinates -> world coordinates -> coordinates in respect to the camera -> screen coordinates
@@ -37,7 +36,13 @@ void main()
 		vertexColor = color;
 
 	texCoord = texturePos;
-	vertexNormal = normal;
+
+	// get the eye position to calculate the direction where light comes from
+	vec3 eyePos = vec3(model * position); 
+	lightDir = normalize(lightPos - eyePos);
+
+	// transpose inverse to maintain the normals perpendicular
+	vertexNormal = normalize(mat3(transpose(inverse(model))) * normal);
 
 }
 
