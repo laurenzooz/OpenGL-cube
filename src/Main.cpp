@@ -142,6 +142,7 @@ int main()
 	GLint cubeLightUid = glGetUniformLocation(shaderProgram.id, "lightColor");
 	GLint cubeLightPosUid = glGetUniformLocation(shaderProgram.id, "lightPos");
 	GLint cubeAmbientUid = glGetUniformLocation(shaderProgram.id, "ambient");
+	GLint cubeEyePosUid = glGetUniformLocation(shaderProgram.id, "eyePos");
 
 
 
@@ -189,6 +190,7 @@ int main()
 
 	glUniform3f(cubeLightUid, lightColor[0], lightColor[1], lightColor[2]);
 	glUniform3f(cubeLightPosUid, lightPos[0], lightPos[1], lightPos[2]);
+	glUniform3f(cubeEyePosUid, eyePos[0], eyePos[1], eyePos[2]);
 	glUniform1f(cubeAmbientUid, ambient);
 
 
@@ -211,6 +213,7 @@ int main()
 	GLint floorLightUid = glGetUniformLocation(floorShader.id, "lightColor");
 	GLint floorLightPosUid = glGetUniformLocation(floorShader.id, "lightPos");
 	GLint floorAmbientUid = glGetUniformLocation(floorShader.id, "ambient");
+	GLint floorEyePostUid = glGetUniformLocation(floorShader.id, "eyePos");
 
 	// Move down by the cube size so the cube lies flat on the ground
 	glm::mat4 floorModel = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, -0.25f, 0.0f)); 
@@ -223,6 +226,7 @@ int main()
 	glUniform3f(floorLightUid, lightColor[0], lightColor[1], lightColor[2]);
 	glUniform3f(floorLightPosUid, lightPos[0], lightPos[1], lightPos[2]);
 	glUniform1f(floorAmbientUid, ambient);
+	glUniform3f(floorEyePostUid, eyePos[0], eyePos[1], eyePos[2]);
 
 
 

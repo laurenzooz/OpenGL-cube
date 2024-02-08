@@ -1,8 +1,8 @@
 #version 460 core
 
-layout(location = 0) in vec4 position;
-layout(location = 1) in vec2 texturePos;
-layout(location = 2) in vec3 normal;
+layout(location = 0) in vec4 position_a;
+layout(location = 1) in vec2 texturePos_a;
+layout(location = 2) in vec3 normal_a;
 
 uniform float time;
 
@@ -14,20 +14,17 @@ uniform mat4 projection;
 uniform vec3 color;
 uniform bool colorVariation; // use the color variation over time or not
 
-uniform vec3 lightPos;
-
 out vec3 vertexColor;
 out vec2 texCoord;
-out vec3 vertexNormal;
-out vec3 lightDir;
-
+out vec3 normal;
+out vec3 fragPos;
 
 void main()
 {
 
 	// Multiply the position of the vertex by the matrices
 	// Cube's local coordinates -> world coordinates -> coordinates in respect to the camera -> screen coordinates
-	gl_Position = projection * view * model * position;
+	gl_Position = projection * view * model * position_a;
 
 	if (colorVariation)
 		// Sine functions to create nice variation in color.
@@ -35,15 +32,13 @@ void main()
 	else
 		vertexColor = color;
 
-	texCoord = texturePos;
+	texCoord = texturePos_a;
 
-	// get the eye position to calculate the direction where light comes from
-	vec3 eyePos = vec3(model * position); 
-	lightDir = normalize(lightPos - eyePos);
+	// Calculate fragment positions
+	fragPos = vec3(model * position_a); 	
 
-	// transpose inverse to maintain the normals perpendicular
-	vertexNormal = normalize(mat3(transpose(inverse(model))) * normal);
-
+	// transpose inverse to maintain the normals perpendicular even if cube turns or moves
+	normal = normalize(mat3(transpose(inverse(model))) * normal_a);
 }
 
 
