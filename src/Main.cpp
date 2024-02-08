@@ -20,6 +20,15 @@
 const unsigned int width = 800;
 const unsigned int height = 600;
 
+
+glm::mat4 moveCamera(glm::vec3 &eyePos, glm::vec3 &eyeDir)
+{
+	//eyePos = eyePos + 1.1f * eyeDir;
+	eyePos = eyePos + (glm::normalize(eyeDir) * 0.1f);
+	return glm::lookAt(eyePos, eyeDir, glm::vec3(0.0f, 1.0f, 0.0f));
+}
+
+
 int main()
 {
 	srand(time(0));
@@ -113,7 +122,9 @@ int main()
 
 	// View matrix
 	glm::vec3 eyePos = glm::vec3(2.0f, 2.0f, 2.0f); 
-	view = glm::lookAt(eyePos, glm::normalize(glm::vec3(0.0f, -0.5f, 0.0f) - eyePos), glm::vec3(0.0f, 1.0f, 0.0f));
+	glm::vec3 eyeDir = glm::vec3(0.0f) - eyePos; 
+
+	view = glm::lookAt(eyePos, eyeDir, glm::vec3(0.0f, 1.0f, 0.0f));
 
 	// build the perspective projection matrix
 	projection = glm::perspective(45.0f, (float)width  / (float)height, 0.1f, 100.0f);
@@ -157,15 +168,15 @@ int main()
 	// Light
 	GLint floorLightUid = glGetUniformLocation(floorShader.id, "lightColor");
 	GLint floorLightPosUid = glGetUniformLocation(floorShader.id, "lightPos");
-	GLint floorAmbientUid = glGetUniformLocation(shaderProgram.id, "ambient");
+	GLint floorAmbientUid = glGetUniformLocation(floorShader.id, "ambient");
 
 	// Move down by the cube size so the cube lies flat on the ground
 	glm::mat4 floorModel = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, -0.25f, 0.0f)); 
 
 	// Set the uniform values, use same view and projection matrices
-	glUniformMatrix4fv(floorModelUid, 1, GL_FALSE, glm::value_ptr(view)); 
-	glUniformMatrix4fv(floorViewUid, 1, GL_FALSE, glm::value_ptr(projection));
-	glUniformMatrix4fv(floorProjUid, 1, GL_FALSE, glm::value_ptr(floorModel));
+	glUniformMatrix4fv(floorModelUid, 1, GL_FALSE, glm::value_ptr(floorModel)); 
+	glUniformMatrix4fv(floorViewUid, 1, GL_FALSE, glm::value_ptr(view));
+	glUniformMatrix4fv(floorProjUid, 1, GL_FALSE, glm::value_ptr(projection));
 
 	glUniform3f(floorLightUid, lightColor[0], lightColor[1], lightColor[2]);
 	glUniform3f(floorLightPosUid, lightPos[0], lightPos[1], lightPos[2]);
@@ -191,9 +202,9 @@ int main()
 	glm::mat4 lightModel = glm::translate(glm::mat4(1.0f), glm::vec3(lightPos[0], lightPos[1], lightPos[2])); 
 
 	// Set the uniform values, use same view and projection matrices
-	glUniformMatrix4fv(lightModelUid, 1, GL_FALSE, glm::value_ptr(view)); 
-	glUniformMatrix4fv(lightViewUid, 1, GL_FALSE, glm::value_ptr(projection));
-	glUniformMatrix4fv(lightProjUid, 1, GL_FALSE, glm::value_ptr(lightModel));
+	glUniformMatrix4fv(lightModelUid, 1, GL_FALSE, glm::value_ptr(lightModel)); 
+	glUniformMatrix4fv(lightViewUid, 1, GL_FALSE, glm::value_ptr(view));
+	glUniformMatrix4fv(lightProjUid, 1, GL_FALSE, glm::value_ptr(projection));
 
 	
 
@@ -218,10 +229,14 @@ int main()
 
 		// Floor
 		glUseProgram(floorShader.id);
+		// Uniforms
+		glUniform1f(floorAmbientUid, ambient);
+		glUniformMatrix4fv(floorViewUid, 1, GL_FALSE, glm::value_ptr(view));
 		floor.draw();
 
 		// Light
 		glUseProgram(lightShader.id);
+		glUniformMatrix4fv(lightViewUid, 1, GL_FALSE, glm::value_ptr(view));
 		light.draw();
 		
 		// cube
@@ -229,13 +244,14 @@ int main()
 		
 		// Set the uniform values that change over time
 		glUniform1f(timeUid, glfwGetTime());
+		glUniform1f(cubeAmbientUid, ambient);
 
 		glUniformMatrix4fv(cubeModelUid, 1, GL_FALSE, glm::value_ptr(model));
+		glUniformMatrix4fv(cubeViewUid, 1, GL_FALSE, glm::value_ptr(view));
+
 
 		// Draw the cube	
 		cube.draw();
-
-		
 
 
 		// Imgui
@@ -261,12 +277,7 @@ int main()
 		if (ImGui::SliderFloat("Rotate", &rotation, -180.0f, 180.0f))
 			model = glm::rotate(model, glm::radians(prevRotation - rotation), glm::vec3(0.0f, 1.0f, 0.0f));
 		
-		if (ImGui::SliderFloat("Ambient light", &ambient, 0.0f, 1.0f))
-		{
-			glUniform1f(cubeAmbientUid, ambient);
-			glUniform1f(floorAmbientUid, ambient);
-		}
-
+		ImGui::SliderFloat("Ambient light", &ambient, 0.0f, 1.0f);
 
 		// Toggle texture
 		if (ImGui::RadioButton("Texture", useTexture))
@@ -286,7 +297,8 @@ int main()
 		if (!useTexture && !useVariation && ImGui::ColorEdit3("Select color", glm::value_ptr(cubeColor)))	
 			glUniform3f(cubeColorUid, cubeColor[0], cubeColor[1], cubeColor[2]);
 		
-			
+		if (ImGui::Button("Zoom"))	
+			view = moveCamera(eyePos, eyeDir);
 
 
 		ImGui::End();
@@ -296,10 +308,7 @@ int main()
 		
 		prevCubePos = cubePos;
 		prevRotation = rotation;
-
-
-
-		
+	
 
 		glfwSwapBuffers(window);
 		glfwPollEvents();
