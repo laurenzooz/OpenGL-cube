@@ -10,6 +10,7 @@ in vec3 lightDir;
 uniform sampler2D texImg;
 
 uniform vec3 lightColor;
+uniform float ambient;
 
 uniform bool useTexture; // Wheter to use normal color or a texture
 
@@ -24,7 +25,6 @@ void main()
 	
 
 	float diffuse = max(dot(vertexNormal, lightDir), 0.0f); // scalar to scale the light intensity
-	float ambient = 0.10f;
 
 	fragColor = fragColor * vec4(lightColor, 1.0f) * (diffuse + ambient);
 }
