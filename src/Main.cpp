@@ -7,6 +7,9 @@
 #include <glm/gtc/matrix_transform.hpp> 
 #include <glm/matrix.hpp>
 #include <glm/gtc/type_ptr.hpp>
+#define GLM_ENABLE_EXPERIMENTAL // to use vector rotation
+#include <glm/gtx/rotate_vector.hpp>
+#include <glm/gtx/vector_angle.hpp>
 
 #include "../imgui/imgui.h"
 #include "../imgui/imgui_impl_glfw.h"
@@ -26,7 +29,7 @@ const unsigned int height = 600;
 glm::mat4 moveCamera(GLFWwindow* window, glm::vec3 &eyePos, glm::vec3 &eyeDir)
 {
 	
-	float speed = 0.1f;
+	float speed = 0.05f;
 	glm::vec3 direction = glm::normalize(eyeDir);
 
 	// Key inputs to move
@@ -57,7 +60,12 @@ glm::mat4 moveCamera(GLFWwindow* window, glm::vec3 &eyePos, glm::vec3 &eyeDir)
 		eyePos += glm::vec3(1.0f, 0.0f, 0.0f) * speed; // Right
 		eyeDir += glm::vec3(1.0f, 0.0f, 0.0f) * speed;
 	}
-	
+
+	if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS) eyeDir += glm::vec3(0.0f, 1.0f, 0.0f) * speed;
+	if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS) eyeDir += glm::vec3(0.0f, -1.0f, 0.0f) * speed;
+	if (glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS) eyeDir += glm::vec3(-1.0f, 0.0f, 0.0f) * speed;
+	if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS) eyeDir += glm::vec3(1.0f, 0.0f, 0.0f) * speed;
+
 	return glm::lookAt(eyePos, eyeDir, glm::vec3(0.0f, 1.0f, 0.0f));
 }
 
